@@ -13,7 +13,16 @@ namespace NewHeist
 
 
             Console.WriteLine("Plan Your Heist!");
-            Console.WriteLine();
+            Console.WriteLine("Please enter a difficulty level for the bank. (this number must be a positive integer)");
+            int bankDifficultyLevel = 0;
+            var testNumber = int.TryParse(Console.ReadLine(), out bankDifficultyLevel);
+            while (!testNumber || bankDifficultyLevel < 0)
+            {
+                Console.WriteLine("The value you entered does not look correct. Please follow the rules.");
+                testNumber = int.TryParse(Console.ReadLine(), out bankDifficultyLevel);
+            }
+
+
 
             string addTeamMember;
 
@@ -46,7 +55,7 @@ namespace NewHeist
                 Console.ReadLine();
 
                 teamTeamTeam.Add(new TeamMember(memberName, memberSkill, courageDecimal));
-                Console.WriteLine("Would you like to add another team member? Enter y for yes, use any other character for no.");
+                Console.WriteLine("Would you like to add another team member? [y or n]");
                 addTeamMember = Console.ReadLine().ToLower();
             } while (addTeamMember == "y");
 
@@ -58,27 +67,38 @@ namespace NewHeist
 
             Console.ReadLine();
             Console.Clear();
-            var bankDifficultyLevel = 100;
-            var totalSkill = teamTeamTeam.Sum(t => t.SkillLevel);
-            //int totalSkill = 0;
-            //foreach (var teamTeam in teamTeamTeam)
-            //{
-            //    totalSkill += teamTeam.SkillLevel;
-            //}
-            Console.WriteLine($"Your team's total skill level is {totalSkill}.");
-            Console.ReadLine();
 
-            if (totalSkill >= bankDifficultyLevel)
+            int numberOfTries = 0;
+            Console.WriteLine("How many times would you like to run this scenario?");
+            var convertNumber = int.TryParse(Console.ReadLine(), out numberOfTries);
+
+            var successTotal = 0;
+
+            for (var i = 0; i < numberOfTries; i++)
             {
-                Console.WriteLine("You did it. Success!");
-            }
-            else
-            {
-                Console.WriteLine("Are those sirens?");
-            }
+                Random random = new Random();
+                var randomDifficultyLevel = random.Next(-10, 10);
+                var finalBankLevel = bankDifficultyLevel + randomDifficultyLevel;
+                var totalSkill = teamTeamTeam.Sum(t => t.SkillLevel);
+                //int totalSkill = 0;
+                //foreach (var teamTeam in teamTeamTeam)
+                //{
+                //    totalSkill += teamTeam.SkillLevel;
+                //}
+                Console.WriteLine($"Your team's total skill level is {totalSkill}. The banks is {finalBankLevel}");
 
+                if (totalSkill >= finalBankLevel)
+                {
+                    Console.WriteLine("You did it. Success!");
+                    successTotal += 1;
+                }
+                else
+                {
+                    Console.WriteLine("Are those sirens? Run failed.");
+                }
+            }
+            Console.WriteLine($"You successfully infiltrated the bank {successTotal} times. You failed {numberOfTries - successTotal} times.");
             Console.ReadLine();
-
         }
     }
 }
